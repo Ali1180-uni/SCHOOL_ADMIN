@@ -4,11 +4,11 @@ import Topbar from "./Topbar";
 
 export default function DashboardLayout() {
   return (
-    <div className="flex h-screen bg-[#0B1120]">
+    <div className="flex h-screen bg-[#f7f8f4]">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto bg-[#f7f8f4] p-6">
           <Outlet />
         </main>
       </div>

@@ -1,32 +1,66 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../firebase/config";
-
-const AuthContext = createContext(null);
+import { auth, authReady, db } from "../firebase/config";
+import { AuthContext } from "./auth-context";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const loadUserProfile = async (firebaseUser) => {
+    if (!firebaseUser) {
+      return { user: null, role: null };
+    }
+
+    const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+    const data = userDoc.exists() ? userDoc.data() : null;
+    return { user: firebaseUser, role: data?.role ?? null };
+  };
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-        const data = userDoc.exists() ? userDoc.data() : null;
-        setUser(firebaseUser);
-        setRole(data?.role ?? null);
-      } else {
+      try {
+        const profile = await loadUserProfile(firebaseUser);
+        setUser(profile.user);
+        setRole(profile.role);
+      } catch {
         setUser(null);
         setRole(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
     return unsub;
   }, []);
 
-  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
+  const login = async (email, password) => {
+    await authReady;
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+    let profile;
+
+    try {
+      profile = await loadUserProfile(credential.user);
+    } catch (error) {
+      await signOut(auth);
+      setUser(null);
+      setRole(null);
+      throw error;
+    }
+
+    if (profile.role !== "admin") {
+      await signOut(auth);
+      setUser(null);
+      setRole(null);
+      throw new Error("This account does not have admin access.");
+    }
+
+    setUser(profile.user);
+    setRole(profile.role);
+    setLoading(false);
+    return credential;
+  };
   const logout = () => signOut(auth);
 
   return (
@@ -36,4 +70,3 @@ export function AuthProvider({ children }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);

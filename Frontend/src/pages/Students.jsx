@@ -24,12 +24,12 @@ function StudentModal({ open, onClose, onSubmit, defaultValues }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-      <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 p-6">
+      <div className="w-full max-w-md rounded-xl border border-[#e1e8e1] bg-white p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-white">
+          <h2 className="text-sm font-semibold text-[#17324d]">
             {defaultValues ? "Edit Student" : "Add Student"}
           </h2>
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-300">
+          <button onClick={onClose} className="text-[#819098] hover:text-[#17324d]">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -44,28 +44,28 @@ function StudentModal({ open, onClose, onSubmit, defaultValues }) {
           <input
             {...register("name", { required: true })}
             placeholder="Full name"
-            className="w-full rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-200 focus:border-blue-600 focus:outline-none"
+            className="w-full rounded-lg border border-[#dbe4dd] bg-[#f7f8f4] px-3 py-2 text-sm text-[#17324d] focus:border-[#147457] focus:outline-none"
           />
           <div className="grid grid-cols-2 gap-3">
             <input
               {...register("class", { required: true })}
               placeholder="Class"
-              className="rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-200 focus:border-blue-600 focus:outline-none"
+              className="rounded-lg border border-[#dbe4dd] bg-[#f7f8f4] px-3 py-2 text-sm text-[#17324d] focus:border-[#147457] focus:outline-none"
             />
             <input
               {...register("section", { required: true })}
               placeholder="Section"
-              className="rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-200 focus:border-blue-600 focus:outline-none"
+              className="rounded-lg border border-[#dbe4dd] bg-[#f7f8f4] px-3 py-2 text-sm text-[#17324d] focus:border-[#147457] focus:outline-none"
             />
           </div>
           <input
             {...register("rollNo", { required: true })}
             placeholder="Roll No"
-            className="w-full rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-200 focus:border-blue-600 focus:outline-none"
+            className="w-full rounded-lg border border-[#dbe4dd] bg-[#f7f8f4] px-3 py-2 text-sm text-[#17324d] focus:border-[#147457] focus:outline-none"
           />
           <select
             {...register("status")}
-            className="w-full rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-200 focus:border-blue-600 focus:outline-none"
+            className="w-full rounded-lg border border-[#dbe4dd] bg-[#f7f8f4] px-3 py-2 text-sm text-[#17324d] focus:border-[#147457] focus:outline-none"
           >
             <option>Present</option>
             <option>Absent</option>
@@ -73,7 +73,7 @@ function StudentModal({ open, onClose, onSubmit, defaultValues }) {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-blue-600 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="w-full rounded-lg bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-700"
           >
             {defaultValues ? "Save Changes" : "Add Student"}
           </button>
@@ -117,7 +117,7 @@ export default function Students() {
     try {
       await deleteDoc(doc(db, "students", id));
       toast.success("Student removed");
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete");
     }
   };
@@ -130,15 +130,15 @@ export default function Students() {
     <div>
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-white">Students</h1>
-          <p className="text-sm text-slate-500">Manage all enrolled students</p>
+          <h1 className="text-xl font-semibold text-[#17324d]">Students</h1>
+          <p className="text-sm text-[#71838b]">Manage all enrolled students</p>
         </div>
         <button
           onClick={() => {
             setEditing(null);
             setModalOpen(true);
           }}
-          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          className="flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
         >
           <Plus className="h-4 w-4" /> Add Student
         </button>
@@ -148,12 +148,12 @@ export default function Students() {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search by name..."
-        className="mb-4 w-72 rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-sm text-slate-200 focus:border-blue-600 focus:outline-none"
+        className="mb-4 w-72 rounded-lg border border-[#e1e8e1] bg-white px-3 py-2 text-sm text-[#17324d] shadow-sm focus:border-[#147457] focus:outline-none"
       />
 
-      <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
+      <div className="overflow-hidden rounded-xl border border-[#e1e8e1] bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-900/80 text-xs uppercase text-slate-500">
+          <thead className="bg-[#f1f5f0] text-xs uppercase text-[#71838b]">
             <tr>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Class</th>
@@ -163,17 +163,17 @@ export default function Students() {
               <th className="px-4 py-3 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-[#e8eee8]">
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-slate-500">
+                <td colSpan={6} className="px-4 py-6 text-center text-[#819098]">
                   No students found.
                 </td>
               </tr>
             )}
             {filtered.map((s) => (
-              <tr key={s.id} className="text-slate-300">
-                <td className="px-4 py-3 font-medium text-slate-200">{s.name}</td>
+              <tr key={s.id} className="text-[#58707b]">
+                <td className="px-4 py-3 font-medium text-[#17324d]">{s.name}</td>
                 <td className="px-4 py-3">{s.class}</td>
                 <td className="px-4 py-3">{s.section}</td>
                 <td className="px-4 py-3">{s.rollNo}</td>
@@ -195,13 +195,13 @@ export default function Students() {
                         setEditing(s);
                         setModalOpen(true);
                       }}
-                      className="text-slate-400 hover:text-blue-400"
+                      className="text-[#819098] hover:text-[#147457]"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(s.id)}
-                      className="text-slate-400 hover:text-red-400"
+                      className="text-[#819098] hover:text-red-500"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>

@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+:root {
+  --color-brand-50: #eef8f2;
+  --color-brand-100: #d8eee0;
+  --color-brand-500: #198a68;
+  --color-brand-600: #147457;
+  --color-brand-700: #105d48;
+  --color-surface: #f7f8f4;
+  --color-surface-raised: #ffffff;
+  --color-border: #e1e8e1;
+  --color-ink-950: #17324d;
+  --color-ink-700: #4d6573;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #fbfcf9 0%, #f2f6f0 100%);
+  color: var(--color-ink-950);
+  font-family: "Plus Jakarta Sans", sans-serif;
+}

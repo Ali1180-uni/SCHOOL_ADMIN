@@ -16,14 +16,14 @@ const feeTrend = [
 
 function StatCard({ icon: Icon, label, value, color }) {
   return (
-    <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+    <div className="rounded-xl border border-[#e1e8e1] bg-white p-5 shadow-sm">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm text-slate-400">{label}</span>
+        <span className="text-sm text-[#6b7d87]">{label}</span>
         <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${color}`}>
           <Icon className="h-4 w-4 text-white" />
         </div>
       </div>
-      <p className="text-2xl font-semibold text-white">{value}</p>
+      <p className="text-2xl font-semibold text-[#17324d]">{value}</p>
     </div>
   );
 }
@@ -60,32 +60,32 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-white">Welcome back, Admin 👋</h1>
-        <p className="text-sm text-slate-500">Here's what's happening at your school today.</p>
+        <h1 className="text-xl font-semibold text-[#17324d]">Welcome back, Admin</h1>
+        <p className="text-sm text-[#71838b]">Here&apos;s what&apos;s happening at your school today.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Users} label="Total Students" value={counts.students} color="bg-blue-600" />
+        <StatCard icon={Users} label="Total Students" value={counts.students} color="bg-emerald-600" />
         <StatCard icon={GraduationCap} label="Total Teachers" value={counts.teachers} color="bg-purple-600" />
         <StatCard icon={Layers} label="Total Classes" value={counts.classes} color="bg-orange-600" />
         <StatCard icon={Wallet} label="Total Fees Collected" value="Rs. 4,85,000" color="bg-green-600" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
-          <h2 className="mb-4 text-sm font-medium text-slate-300">Fee Collection Overview</h2>
+        <div className="rounded-xl border border-[#e1e8e1] bg-white p-5 shadow-sm">
+          <h2 className="mb-4 text-sm font-medium text-[#4d6573]">Fee Collection Overview</h2>
           <ResponsiveContainer width="100%" height={220}>
             <LineChart data={feeTrend}>
               <XAxis dataKey="month" stroke="#64748b" fontSize={12} />
               <YAxis stroke="#64748b" fontSize={12} />
-              <Tooltip contentStyle={{ background: "#1e293b", border: "none", borderRadius: 8 }} />
-              <Line type="monotone" dataKey="amount" stroke="#3b82f6" strokeWidth={2} dot={false} />
+              <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e1e8e1", borderRadius: 8 }} />
+              <Line type="monotone" dataKey="amount" stroke="#147457" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
-          <h2 className="mb-4 text-sm font-medium text-slate-300">Attendance Rate</h2>
+        <div className="rounded-xl border border-[#e1e8e1] bg-white p-5 shadow-sm">
+          <h2 className="mb-4 text-sm font-medium text-[#4d6573]">Attendance Rate</h2>
           <div className="flex items-center justify-center">
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
@@ -103,7 +103,7 @@ export default function Dashboard() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-2 flex justify-center gap-4 text-xs text-slate-400">
+          <div className="mt-2 flex justify-center gap-4 text-xs text-[#6b7d87]">
             {attendanceData.map((d) => (
               <span key={d.name} className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full" style={{ background: d.color }} />

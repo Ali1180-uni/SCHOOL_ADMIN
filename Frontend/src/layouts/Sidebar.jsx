@@ -36,10 +36,10 @@ const navItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="hidden w-60 shrink-0 flex-col border-r border-slate-800 bg-[#0B1120] md:flex">
+    <aside className="hidden w-60 shrink-0 flex-col border-r border-[#e1e8e1] bg-white md:flex">
       <div className="flex items-center gap-2 px-5 py-5">
-        <School className="h-6 w-6 text-blue-500" />
-        <span className="text-sm font-semibold text-white">Bright Future School</span>
+        <School className="h-6 w-6 text-emerald-500" />
+        <span className="text-sm font-semibold text-[#17324d]">Bright Future School</span>
       </div>
 
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2">
@@ -51,8 +51,8 @@ export default function Sidebar() {
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                 isActive
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
+                  ? "bg-[#147457] text-white shadow-sm"
+                  : "text-[#6b7d87] hover:bg-[#eef8f2] hover:text-[#17324d]"
               }`
             }
           >
