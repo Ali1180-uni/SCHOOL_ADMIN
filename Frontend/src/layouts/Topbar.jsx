@@ -25,7 +25,7 @@ export default function Topbar() {
           </div>
           <div className="hidden text-left sm:block">
             <p className="text-sm font-medium text-[#17324d]">Admin</p>
-            <p className="text-xs text-[#819098]">Super Admin</p>
+            <p className="text-xs text-[#819098]">Prof Muhammad Ali</p>
           </div>
         </div>
         <button
