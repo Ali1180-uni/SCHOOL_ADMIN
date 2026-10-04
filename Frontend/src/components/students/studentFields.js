@@ -32,5 +32,5 @@ export const emptyStudent = {
   religion: "",
   status: "Present",
   imageUrl: "",
-  imagePath: "",
+  imagePublicId: "",
 };

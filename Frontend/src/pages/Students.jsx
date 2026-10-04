@@ -8,51 +8,26 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import ConfirmDialog from "../components/students/ConfirmDialog";
 import StudentDetailsDialog from "../components/students/StudentDetailsDialog";
 import StudentFormDialog from "../components/students/StudentFormDialog";
-import { db, storage } from "../firebase/config";
-
-async function uploadStudentImage(studentId, file) {
-  const safeName = file.name.replace(/[^a-z0-9.-]/gi, "-");
-  const imagePath = `students/${studentId}/${Date.now()}-${safeName}`;
-  const imageRef = ref(storage, imagePath);
-
-  return new Promise((resolve, reject) => {
-    const uploadTask = uploadBytesResumable(imageRef, file);
-    const timeout = setTimeout(() => {
-      uploadTask.cancel();
-      reject(new Error("Image upload timed out. Check that Firebase Storage is enabled."));
-    }, 15000);
-
-    uploadTask.on(
-      "state_changed",
-      undefined,
-      (error) => {
-        clearTimeout(timeout);
-        reject(error);
-      },
-      async () => {
-        clearTimeout(timeout);
-        try {
-          resolve({ imagePath, imageUrl: await getDownloadURL(imageRef) });
-        } catch (error) {
-          reject(error);
-        }
-      },
-    );
-  });
-}
+import { deleteStudentImage, uploadStudentImage } from "../services/cloudinary";
+import { db } from "../firebase/config";
 
 function getSaveErrorMessage(error) {
-  if (error.message?.includes("timed out") || error.code === "storage/retry-limit-exceeded") {
-    return "Image upload timed out. Enable Firebase Storage for this project.";
+  if (error.code === "cloudinary/missing-config") {
+    return "Set a real unsigned Cloudinary upload preset in .env.";
   }
-  if (error.code === "storage/unauthorized") {
-    return "Firebase Storage rules do not allow this upload.";
+  if (error.code === "cloudinary/timeout") {
+    return "Image upload timed out. Please try again.";
+  }
+  if (error.code === "cloudinary/upload-failed") {
+    return error.message;
+  }
+  if (error.code === "cloudinary/invalid-response") {
+    return "Cloudinary did not return an image URL.";
   }
   return "Unable to save student details.";
 }
@@ -90,8 +65,7 @@ export default function Students() {
       ? data.disabilityDetails
       : "None";
     const selectedFile = imageFile?.[0];
-    let uploadedImagePath;
-
+    const oldPublicId = editing?.imagePublicId;
     try {
       const studentRef = editing
         ? doc(db, "students", editing.id)
@@ -100,7 +74,6 @@ export default function Students() {
 
       if (selectedFile) {
         imageData = await uploadStudentImage(studentRef.id, selectedFile);
-        uploadedImagePath = imageData.imagePath;
       }
 
       const record = { ...studentData, ...(imageData ?? {}) };
@@ -113,17 +86,19 @@ export default function Students() {
         });
       }
 
-      if (editing?.imagePath && imageData && editing.imagePath !== imageData.imagePath) {
-        await deleteObject(ref(storage, editing.imagePath)).catch(() => undefined);
+      if (oldPublicId && imageData?.imagePublicId && oldPublicId !== imageData.imagePublicId) {
+        try {
+          await deleteStudentImage(oldPublicId);
+        } catch (deleteError) {
+          console.error("Old student image cleanup failed:", deleteError);
+          toast.error("Student saved, but the old image could not be deleted.");
+        }
       }
 
       toast.success(editing ? "Student updated" : "Student added");
       setEditing(null);
       setModalOpen(false);
     } catch (error) {
-      if (uploadedImagePath) {
-        await deleteObject(ref(storage, uploadedImagePath)).catch(() => undefined);
-      }
       toast.error(getSaveErrorMessage(error));
       console.error("Student save error:", error);
     } finally {
@@ -145,8 +120,10 @@ export default function Students() {
     setActionBusy(true);
     try {
       await deleteDoc(doc(db, "students", confirmation.student.id));
-      if (confirmation.student.imagePath) {
-        await deleteObject(ref(storage, confirmation.student.imagePath)).catch(() => undefined);
+      if (confirmation.student.imagePublicId) {
+        await deleteStudentImage(confirmation.student.imagePublicId).catch((error) => {
+          console.error("Student image cleanup failed:", error);
+        });
       }
       toast.success("Student removed");
     } catch (error) {

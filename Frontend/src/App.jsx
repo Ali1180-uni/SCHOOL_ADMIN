@@ -5,7 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import AdminRoute from "./routes/AdminRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 
-import ModulePage from "./pages/Teacher";
+import ModulePage from "./pages/ModulePage";
 
 const Login = lazy(() => import("./pages/Login"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
