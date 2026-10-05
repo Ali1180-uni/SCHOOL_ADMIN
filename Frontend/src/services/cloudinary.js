@@ -1,8 +1,5 @@
-import { auth } from "../firebase/config";
-
 const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-const apiUrl = import.meta.env.VITE_API_URL?.replace(/\/$/, "");
 
 export async function uploadStudentImage(studentId, file) {
   if (!cloudName || !uploadPreset || uploadPreset === "your-unsigned-upload-preset") {
@@ -48,33 +45,4 @@ export async function uploadStudentImage(studentId, file) {
   } finally {
     clearTimeout(timeout);
   }
-}
-
-export async function deleteStudentImage(publicId) {
-  if (!publicId || !publicId.startsWith("students/")) {
-    throw new Error("Invalid student image public ID.");
-  }
-  if (!apiUrl) {
-    throw new Error("VITE_API_URL is not configured.");
-  }
-
-  const user = auth.currentUser;
-  if (!user) throw new Error("You must be signed in to delete an image.");
-
-  const token = await user.getIdToken();
-  const response = await fetch(`${apiUrl}/api/delete-image`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ publicId }),
-  });
-  const result = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(result.error || "Unable to delete the old image.");
-  }
-
-  return result;
 }

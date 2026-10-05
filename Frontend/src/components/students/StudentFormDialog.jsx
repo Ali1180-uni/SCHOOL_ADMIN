@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ImagePlus, X } from "lucide-react";
 import { useForm, useWatch } from "react-hook-form";
 import { classOptions, emptyStudent } from "./studentFields";
+import { validateImageFile } from "../../utils/imageValidation";
 
 const inputClass = "w-full rounded-lg border border-[#dbe4dd] bg-[#f7f8f4] px-3 py-2 text-sm text-[#17324d] outline-none transition focus:border-[#147457]";
 const labelClass = "mb-1 block text-xs font-medium text-[#58707b]";
@@ -18,15 +19,7 @@ export default function StudentFormDialog({ open, onClose, onSubmit, student, bu
   });
   const previousSchool = useWatch({ control, name: "previousSchool" });
   const disability = useWatch({ control, name: "disability" });
-  const imageField = register("imageFile", {
-    validate: (fileList) => {
-      const file = fileList?.[0];
-      if (!file) return true;
-      if (!file.type.startsWith("image/")) return "Please choose an image file.";
-      if (file.size > 5 * 1024 * 1024) return "Image must be smaller than 5 MB.";
-      return true;
-    },
-  });
+  const imageField = register("image", { validate: validateImageFile });
 
   useEffect(() => {
     reset({ ...emptyStudent, ...student });
@@ -49,6 +42,14 @@ export default function StudentFormDialog({ open, onClose, onSubmit, student, bu
     setImagePreview(imagePreviewRef.current);
   };
 
+  const handleFormSubmit = handleSubmit(async (data) => {
+    const saved = await onSubmit(data);
+    if (!saved) return;
+
+    reset({ ...emptyStudent, ...student });
+    setImagePreview("");
+  });
+
   if (!open) return null;
 
   return (
@@ -66,7 +67,7 @@ export default function StudentFormDialog({ open, onClose, onSubmit, student, bu
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={handleFormSubmit} className="space-y-5">
           <section className="grid gap-4 sm:grid-cols-[7rem_1fr]">
             <div>
               <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl border border-dashed border-[#b8cec0] bg-[#f1f5f0]">
@@ -86,7 +87,7 @@ export default function StudentFormDialog({ open, onClose, onSubmit, student, bu
                   className="sr-only"
                 />
               </label>
-              <FieldError message={errors.imageFile?.message} />
+              <FieldError message={errors.image?.message} />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">

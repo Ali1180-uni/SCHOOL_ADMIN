@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import ConfirmDialog from "../components/students/ConfirmDialog";
 import StudentDetailsDialog from "../components/students/StudentDetailsDialog";
 import StudentFormDialog from "../components/students/StudentFormDialog";
-import { deleteStudentImage, uploadStudentImage } from "../services/cloudinary";
+import { uploadStudentImage } from "../services/cloudinary";
 import { db } from "../firebase/config";
 
 function getSaveErrorMessage(error) {
@@ -36,7 +36,7 @@ export default function Students() {
   const [students, setStudents] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [viewing, setViewing] = useState(null);
+  const [viewingId, setViewingId] = useState(null);
   const [confirmation, setConfirmation] = useState(null);
   const [saving, setSaving] = useState(false);
   const [actionBusy, setActionBusy] = useState(false);
@@ -57,15 +57,14 @@ export default function Students() {
     savingRef.current = true;
     setSaving(true);
 
-    const { imageFile, ...studentData } = data;
+    const { image, ...studentData } = data;
     studentData.previousSchoolName = data.previousSchool === "yes"
       ? data.previousSchoolName
       : "No previous school";
     studentData.disabilityDetails = data.disability === "yes"
       ? data.disabilityDetails
       : "None";
-    const selectedFile = imageFile?.[0];
-    const oldPublicId = editing?.imagePublicId;
+    const selectedFile = image?.[0];
     try {
       const studentRef = editing
         ? doc(db, "students", editing.id)
@@ -86,21 +85,14 @@ export default function Students() {
         });
       }
 
-      if (oldPublicId && imageData?.imagePublicId && oldPublicId !== imageData.imagePublicId) {
-        try {
-          await deleteStudentImage(oldPublicId);
-        } catch (deleteError) {
-          console.error("Old student image cleanup failed:", deleteError);
-          toast.error("Student saved, but the old image could not be deleted.");
-        }
-      }
-
       toast.success(editing ? "Student updated" : "Student added");
       setEditing(null);
       setModalOpen(false);
+      return true;
     } catch (error) {
       toast.error(getSaveErrorMessage(error));
       console.error("Student save error:", error);
+      return false;
     } finally {
       savingRef.current = false;
       setSaving(false);
@@ -120,11 +112,6 @@ export default function Students() {
     setActionBusy(true);
     try {
       await deleteDoc(doc(db, "students", confirmation.student.id));
-      if (confirmation.student.imagePublicId) {
-        await deleteStudentImage(confirmation.student.imagePublicId).catch((error) => {
-          console.error("Student image cleanup failed:", error);
-        });
-      }
       toast.success("Student removed");
     } catch (error) {
       toast.error("Unable to delete student");
@@ -140,6 +127,7 @@ export default function Students() {
     return [student.name, student.class, student.rollNo, student.fatherName]
       .some((value) => value?.toLowerCase().includes(query));
   });
+  const viewing = students.find((student) => student.id === viewingId);
 
   return (
     <div>
@@ -216,7 +204,7 @@ export default function Students() {
                   <div className="flex justify-end gap-3">
                     <button
                       type="button"
-                      onClick={() => setViewing(student)}
+                      onClick={() => setViewingId(student.id)}
                       aria-label={`View ${student.name}`}
                       className="text-[#819098] hover:text-[#147457]"
                     >
@@ -261,7 +249,7 @@ export default function Students() {
       <StudentDetailsDialog
         open={Boolean(viewing)}
         student={viewing}
-        onClose={() => setViewing(null)}
+        onClose={() => setViewingId(null)}
       />
 
       <ConfirmDialog

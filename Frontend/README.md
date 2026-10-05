@@ -27,13 +27,6 @@ VITE_CLOUDINARY_UPLOAD_PRESET=your-unsigned-preset-name
 Never add a Cloudinary API secret or API key to frontend environment variables.
 Restart Vite after changing `.env`.
 
-The image replacement flow calls the server API to delete the old Cloudinary
-asset. Set `VITE_API_URL` to the server URL, for example:
-
-```sh
-VITE_API_URL=http://localhost:3000
-```
-
 ## Development
 
 ```sh
@@ -47,16 +40,6 @@ npm run dev
 npm run build
 ```
 
-## Deletion API server
-
-Create `server/.env` from `server/.env.example`. Add the Cloudinary API
-credentials and a Firebase service-account JSON object to that file only.
-Never put those values in `Frontend/.env`.
-
-```sh
-cd server
-npm install
-npm run dev
-```
-
-The API verifies Firebase ID tokens before deleting a `students/...` image.
+When replacing a student image, the unsigned preset must have **Overwrite**
+enabled. The app uploads with the same `students/{studentId}` public ID, so
+Cloudinary replaces the previous asset without a backend server.
