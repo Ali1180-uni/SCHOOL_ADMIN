@@ -4,27 +4,13 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import AdminRoute from "./routes/AdminRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
-
-import ModulePage from "./pages/ModulePage";
+import FirestoreModulePage from "./components/modules/FirestoreModulePage";
+import { moduleDefinitions } from "./config/moduleConfig";
+import Reports from "./pages/Reports";
 
 const Login = lazy(() => import("./pages/Login"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Students = lazy(() => import("./pages/Students"));
-
-const moduleRoutes = [
-  ["teachers", "Teachers"],
-  ["classes", "Classes"],
-  ["subjects", "Subjects"],
-  ["timetable", "Timetable"],
-  ["fees", "Fees"],
-  ["attendance", "Attendance"],
-  ["exams", "Exams"],
-  ["admissions", "Admissions"],
-  ["expenses", "Expenses"],
-  ["reports", "Reports"],
-  ["notifications", "Notifications"],
-  ["settings", "Settings"],
-];
 
 export default function App() {
   return (
@@ -45,12 +31,9 @@ export default function App() {
             >
               <Route index element={<Dashboard />} />
               <Route path="students" element={<Students />} />
-              {moduleRoutes.map(([path, title]) => (
-                <Route
-                  key={path}
-                  path={path}
-                  element={<ModulePage title={title} />}
-                />
+              <Route path="reports" element={<Reports />} />
+              {moduleDefinitions.map((definition) => (
+                <Route key={definition.path} path={definition.path} element={<FirestoreModulePage definition={definition} />} />
               ))}
             </Route>
           </Routes>

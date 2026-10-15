@@ -8,11 +8,8 @@ import {
   CalendarClock,
   Wallet,
   ClipboardCheck,
-  FileBarChart2,
   UserPlus,
-  Receipt,
   BarChart3,
-  Bell,
   Settings,
   School,
 } from "lucide-react";
@@ -26,11 +23,8 @@ const navItems = [
   { to: "/timetable", label: "Timetable", icon: CalendarClock },
   { to: "/fees", label: "Fees", icon: Wallet },
   { to: "/attendance", label: "Attendance", icon: ClipboardCheck },
-  { to: "/exams", label: "Exams & Results", icon: FileBarChart2 },
   { to: "/admissions", label: "Admissions", icon: UserPlus },
-  { to: "/expenses", label: "Expenses", icon: Receipt },
   { to: "/reports", label: "Reports", icon: BarChart3 },
-  { to: "/notifications", label: "Notifications", icon: Bell },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
